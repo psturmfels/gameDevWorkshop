@@ -14,6 +14,11 @@
 		1AC8E1861DC6AEB700A43A5F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AC8E1841DC6AEB700A43A5F /* Main.storyboard */; };
 		1AC8E1881DC6AEB700A43A5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AC8E1871DC6AEB700A43A5F /* Assets.xcassets */; };
 		1AC8E18B1DC6AEB700A43A5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AC8E1891DC6AEB700A43A5F /* LaunchScreen.storyboard */; };
+		1AD1A5CC1DC6BD870007E06C /* coin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1AD1A5C71DC6BD870007E06C /* coin.wav */; };
+		1AD1A5CD1DC6BD870007E06C /* explosion.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1AD1A5C81DC6BD870007E06C /* explosion.wav */; };
+		1AD1A5CE1DC6BD870007E06C /* music.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1AD1A5C91DC6BD870007E06C /* music.m4a */; };
+		1AD1A5CF1DC6BD870007E06C /* PlayerExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1AD1A5CA1DC6BD870007E06C /* PlayerExplosion.sks */; };
+		1AD1A5D01DC6BD870007E06C /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD1A5CB1DC6BD870007E06C /* spark.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,11 @@
 		1AC8E1871DC6AEB700A43A5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1AC8E18A1DC6AEB700A43A5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1AC8E18C1DC6AEB700A43A5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AD1A5C71DC6BD870007E06C /* coin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = coin.wav; sourceTree = "<group>"; };
+		1AD1A5C81DC6BD870007E06C /* explosion.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion.wav; sourceTree = "<group>"; };
+		1AD1A5C91DC6BD870007E06C /* music.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = music.m4a; sourceTree = "<group>"; };
+		1AD1A5CA1DC6BD870007E06C /* PlayerExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PlayerExplosion.sks; sourceTree = "<group>"; };
+		1AD1A5CB1DC6BD870007E06C /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +68,7 @@
 		1AC8E1791DC6AEB700A43A5F /* CrashyPlane */ = {
 			isa = PBXGroup;
 			children = (
+				1AD1A5C61DC6BD790007E06C /* Content */,
 				1AC8E17A1DC6AEB700A43A5F /* AppDelegate.swift */,
 				1AC8E17C1DC6AEB700A43A5F /* GameScene.sks */,
 				1AC8E1801DC6AEB700A43A5F /* GameScene.swift */,
@@ -68,6 +79,18 @@
 				1AC8E18C1DC6AEB700A43A5F /* Info.plist */,
 			);
 			path = CrashyPlane;
+			sourceTree = "<group>";
+		};
+		1AD1A5C61DC6BD790007E06C /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				1AD1A5C71DC6BD870007E06C /* coin.wav */,
+				1AD1A5C81DC6BD870007E06C /* explosion.wav */,
+				1AD1A5C91DC6BD870007E06C /* music.m4a */,
+				1AD1A5CA1DC6BD870007E06C /* PlayerExplosion.sks */,
+				1AD1A5CB1DC6BD870007E06C /* spark.png */,
+			);
+			name = Content;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -130,6 +153,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AD1A5CF1DC6BD870007E06C /* PlayerExplosion.sks in Resources */,
+				1AD1A5D01DC6BD870007E06C /* spark.png in Resources */,
+				1AD1A5CD1DC6BD870007E06C /* explosion.wav in Resources */,
+				1AD1A5CE1DC6BD870007E06C /* music.m4a in Resources */,
+				1AD1A5CC1DC6BD870007E06C /* coin.wav in Resources */,
 				1AC8E1861DC6AEB700A43A5F /* Main.storyboard in Resources */,
 				1AC8E17D1DC6AEB700A43A5F /* GameScene.sks in Resources */,
 				1AC8E1881DC6AEB700A43A5F /* Assets.xcassets in Resources */,
@@ -308,6 +336,7 @@
 				1AC8E1911DC6AEB700A43A5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
