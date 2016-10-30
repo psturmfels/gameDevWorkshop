@@ -1,4 +1,4 @@
-# gameDevWorkshop
+# iOS Game Development Workshop, 11/02/16
 ### Setting Up
 - Open up Xcode, and create a new project. Choose "Game" for the template.
 <img src="/images/SelectGame.png">
