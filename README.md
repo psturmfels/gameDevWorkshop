@@ -33,3 +33,6 @@ class GameScene: SKScene {
 - Open up "GameScene.sks" and delete helloLabel. Then, click "View->Utilities->Show Attributes Inspector". In the top bar in the attributes inspector, click the middle button (with the cube). Change the Anchor Point to be X = 0, Y = 0. It should look like the following (it is ok if the width/height are different): 
 
 <img src="/images/SceneAnchorPoint.png">
+- Drag all the files in "assets/GFX/" to the "Assets.xcassets" file.
+- Control-click on the yellow folder called "CrashyPlane" on the left side and click "New Group". Rename the "New Group" to be "Content".
+- Drag the remaining files in assets (PlayerExplosion.sks, coin.wave, explosion.wav, music.m4a, spark.png) to the Content folder.
