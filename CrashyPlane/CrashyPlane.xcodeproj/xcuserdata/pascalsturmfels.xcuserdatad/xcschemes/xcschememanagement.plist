@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>zombieDefense.xcscheme</key>
+		<key>CrashyPlane.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1AB2251C1DC69FB700623EA0</key>
+		<key>1AC8E1761DC6AEB600A43A5F</key>
 		<dict>
 			<key>primary</key>
 			<true/>

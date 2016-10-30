@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AB2251C1DC69FB700623EA0"
-               BuildableName = "zombieDefense.app"
-               BlueprintName = "zombieDefense"
-               ReferencedContainer = "container:zombieDefense.xcodeproj">
+               BlueprintIdentifier = "1AC8E1761DC6AEB600A43A5F"
+               BuildableName = "CrashyPlane.app"
+               BlueprintName = "CrashyPlane"
+               ReferencedContainer = "container:CrashyPlane.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AB2251C1DC69FB700623EA0"
-            BuildableName = "zombieDefense.app"
-            BlueprintName = "zombieDefense"
-            ReferencedContainer = "container:zombieDefense.xcodeproj">
+            BlueprintIdentifier = "1AC8E1761DC6AEB600A43A5F"
+            BuildableName = "CrashyPlane.app"
+            BlueprintName = "CrashyPlane"
+            ReferencedContainer = "container:CrashyPlane.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AB2251C1DC69FB700623EA0"
-            BuildableName = "zombieDefense.app"
-            BlueprintName = "zombieDefense"
-            ReferencedContainer = "container:zombieDefense.xcodeproj">
+            BlueprintIdentifier = "1AC8E1761DC6AEB600A43A5F"
+            BuildableName = "CrashyPlane.app"
+            BlueprintName = "CrashyPlane"
+            ReferencedContainer = "container:CrashyPlane.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AB2251C1DC69FB700623EA0"
-            BuildableName = "zombieDefense.app"
-            BlueprintName = "zombieDefense"
-            ReferencedContainer = "container:zombieDefense.xcodeproj">
+            BlueprintIdentifier = "1AC8E1761DC6AEB600A43A5F"
+            BuildableName = "CrashyPlane.app"
+            BlueprintName = "CrashyPlane"
+            ReferencedContainer = "container:CrashyPlane.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

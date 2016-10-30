@@ -1,6 +1,6 @@
 //
 //  GameScene.swift
-//  zombieDefense
+//  CrashyPlane
 //
 //  Created by Pascal Sturmfels on 10/30/16.
 //  Copyright © 2016 KTP. All rights reserved.
