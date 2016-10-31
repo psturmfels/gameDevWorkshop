@@ -76,4 +76,25 @@ func createPlayer() {
     - We want put this animation on loop, so we chain it to a repeatForever action (otherwise, it would just run the animation once).
     - We call `player.run(runForever)`, which tells the player to continually loop through the animation frames.
 - Build and run the app, and you should see the the plane with a spinning propeller!
+ 
+### Creating the Background
+#### In this section, we add a multiple-depth scrolling background.
+- Still in the "GameScene.swift" file, define a new function below `createPlayer()`: 
+```swift
+func createSky() {
+    let topBlue = UIColor(hue: 0.55, saturation: 0.14, brightness: 0.97, alpha: 1)
+    let topSize = CGSize(width: frame.width, height: frame.height * 0.67)
+    let topSky = SKSpriteNode(color: topBlue, size: topSize)
+    topSky.position = CGPoint(x: frame.midX, y: frame.midY - topSize.height * 0.5)
+    topSky.zPosition = -40
+    self.addChild(topSky)
+        
+    let botBlue = UIColor(hue: 0.55, saturation: 0.16, brightness: 0.96, alpha: 1)
+    let botSize = CGSize(width: frame.width, height: frame.height * 0.33)
+    let botSky = SKSpriteNode(color: botBlue, size: botSize)
+    botSky.position = CGPoint(x: frame.midX, y: botSize.height * 0.5)
+    botSky.zPosition = 40
+    self.addChild(botSky)
+}
+```
 
