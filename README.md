@@ -172,3 +172,86 @@ func createGround() {
     - We set the ground position so that we have two ground nodes that are side by side, starting at the left end of the screen. 
     - We scroll and reset the ground forever. Notice that the ground scrolls faster than the background (5 seconds vs. 20 seconds), which makes a nice visual effect.
 - Add a call to `createGround` in `didMove(to:)`, and low and behold our hard work paying off when you build the app!
+
+### Adding Obstacles
+#### In this section, we learn about Random Number Generation and more advanced Actions
+Before we begin this section, make sure that at the top of the file, under the line `import SpriteKit`, you have the line: `import GameplayKit` 
+
+- Alright so now we have a background. Lets get to making obstacles! We want to write a function that creates a ceiling rock and a ground rock, puts them to the right edge of the screen, and then gets them scrolling across the screen to the left. Add the following function under `createGround`:
+```swift
+func createRocks() {
+    let rockTexture = SKTexture(imageNamed: "rock")
+        
+    let topRock = SKSpriteNode(texture: rockTexture)
+    topRock.zRotation = CGFloat.pi
+    topRock.xScale = -1.0
+        
+    let bottomRock = SKSpriteNode(texture: rockTexture)
+        
+    topRock.zPosition = -20
+    bottomRock.zPosition = -20
+        
+    addChild(topRock)
+    addChild(bottomRock)
+        
+    let xPosition = frame.width + topRock.frame.width
+        
+    let max = Int(frame.height * 0.80)
+    let min = Int(frame.height * 0.20)
+        
+    let rand = GKShuffledDistribution(lowestValue: min, highestValue: max)
+    let yPosition = CGFloat(rand.nextInt())
+        
+    let rockDistance: CGFloat = 70
+        
+    topRock.position = CGPoint(x: xPosition, y: yPosition + topRock.frame.height * 0.5 + rockDistance)
+    bottomRock.position = CGPoint(x: xPosition, y: yPosition - bottomRock.frame.height * 0.5 - rockDistance)
+        
+    let endPosition = frame.width + (topRock.frame.width * 2)
+        
+    let moveAction = SKAction.moveBy(x: -endPosition, y: 0, duration: 6.2)
+    let moveSequence = SKAction.sequence([moveAction, SKAction.removeFromParent()])
+    topRock.run(moveSequence)
+    bottomRock.run(moveSequence)
+}
+```
+- This looks like a scary function, but in truth, you have seen most of it already! I'll address the new stuff here:
+    - We create the topRock by rotating the bottomRock 180 degrees (pi radians). We then flip the topRock along the x-axis so that both rocks are facing "forward": we do this by setting the `xScale` property of topRock, which controls the scaling of the node. A negative scale flips the node.
+    - We create an object of type `GKShuffleDistribution`. This object generates uniform random numbers on the interval [min, max]; when we want a new random number, we just call `.nextInt()` on the distribution object.
+    - We generate a random yPosition between 20% and 80% of the way up the screen. This random yPosition represents where the space in-between the two rocks will be.
+    - We position the top rock to be 70 pixels above yPosition, and the bottom rock to be 70 pixels below yPosition, leaving a gap of 2 * 70 = 140 for the plane to fly through.
+    - We add create an action, called `moveAction`, that moves the rocks towards the left (remember: negative is left in coordinates).
+    - We generate a sequence that moves the rocks, and then calls `removeFromParent()`. This is a new action. It essentially "deletes" the rocks once they have moved passed the screen. We didn't do this for the background, because we re-used those images, but for the rocks we will continually generate new ones as opposed to re-using them, so we throw away the old ones once they are done. It is a bit like porcelain plates vs. paper plates: you don't throw away porcelain plates because they are expensive and you plan to re-use them, but you definitely need to throw paper plates away, or else you will end up with giant pile of dirty paper plates in your apartment. 
+    - We run this sequence on both of the rocks to get them scrolling. 
+- If you have been paying attention, you may realize that this function only generates a single set of rocks. What if we want to repeatedly generate rocks forever? Answer: We use a repeatForever action on the function! Observe:
+```swift
+func startRocks() {
+    let create = SKAction.run { [unowned self] in
+        self.createRocks()
+    }
+        
+    let wait = SKAction.wait(forDuration: 3)
+    let sequence = SKAction.sequence([create, wait])
+    let repeatForever = SKAction.repeatForever(sequence)
+        
+    run(repeatForever)
+}
+```
+- We have seen actions used in the context of SKSpriteNodes: as I've said, they can make nodes move and cycle through animations. But actions can also run blocks of code! The syntax is displayed in the `create` action. The `[unowned self]` line is beyond the scope of this tutorial, but it has to do with memory management. The import point of this action is that every time it is run, it will call `createBlocks`. This type of action is very commonly used to generate repeated events throughout a game, like spawning enemies or obstacles.
+- There is a second new action here, `SKAction.wait(forDuration: 3)`. This action does exactly what it promises to: it waits for three seconds! This action is commonly used within a sequence of actions, to put in fixed amounts of time between other actions. 
+- The rest of the actions are familiar to you: we create a sequence that creates a block and then waits three seconds. We then repeat this action forever, so that blocks will be created every three seconds.
+- If you add a call to `startRocks()` in `didMove(to:)`, you can see the rocks scrolling along by. 
+
+- A couple more things before we get into actual mechanics:
+- One: lets put a thin red rectangle right after each pair of rocks. Why you ask? Because I say so! Also, because it is going to help us keep track of the player's score in the next section (Don't fret; we will make these invisible soon). Add the following block of code to `createRocks` underneath `bottomRock.run(moveSequence)`:
+```swift
+    let rockCollision = SKSpriteNode(color: UIColor.red, size: CGSize(width: 32, height: frame.height))
+    rockCollision.name = "scoreDetect"
+    addChild(rockCollision)
+    rockCollision.position = CGPoint(x: xPosition + (rockCollision.size.width * 2), y: frame.midY)
+    rockCollision.run(moveSequence)
+```
+- You should recognize this code; it is similar to how we created the blue background rectangles earlier on.
+- The only new thing here is that we set `rockCollision.name` to `"scoreDetect"`. The `name` parameter of an SKSpriteNode is a string that is associated with that SKSpriteNode. Why this string is useful will become clear when we implement collision detections, but for now just take my word for it: this is string is useful.
+
+
