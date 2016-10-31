@@ -18,6 +18,7 @@ class GameScene: SKScene {
         createSky()
         createBackground()
         createGround()
+        startRocks()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -90,5 +91,59 @@ class GameScene: SKScene {
             
             ground.run(moveForever)
         }
+    }
+    
+    func createRocks() {
+        let rockTexture = SKTexture(imageNamed: "rock")
+        
+        let topRock = SKSpriteNode(texture: rockTexture)
+        topRock.zRotation = CGFloat.pi
+        topRock.xScale = -1.0
+        
+        let bottomRock = SKSpriteNode(texture: rockTexture)
+        
+        topRock.zPosition = -20
+        bottomRock.zPosition = -20
+        
+        addChild(topRock)
+        addChild(bottomRock)
+        
+        let xPosition = frame.width + topRock.frame.width
+        
+        let max = Int(frame.height * 0.80)
+        let min = Int(frame.height * 0.20)
+        
+        let rand = GKShuffledDistribution(lowestValue: min, highestValue: max)
+        let yPosition = CGFloat(rand.nextInt())
+        
+        let rockDistance: CGFloat = 70
+        
+        topRock.position = CGPoint(x: xPosition, y: yPosition + topRock.frame.height * 0.5 + rockDistance)
+        bottomRock.position = CGPoint(x: xPosition, y: yPosition - bottomRock.frame.height * 0.5 - rockDistance)
+        
+        let endPosition = frame.width + (topRock.frame.width * 2)
+        
+        let moveAction = SKAction.moveBy(x: -endPosition, y: 0, duration: 6.2)
+        let moveSequence = SKAction.sequence([moveAction, SKAction.removeFromParent()])
+        topRock.run(moveSequence)
+        bottomRock.run(moveSequence)
+        
+        let rockCollision = SKSpriteNode(color: UIColor.red, size: CGSize(width: 32, height: frame.height))
+        rockCollision.name = "scoreDetect"
+        addChild(rockCollision)
+        rockCollision.position = CGPoint(x: xPosition + (rockCollision.size.width * 2), y: frame.midY)
+        rockCollision.run(moveSequence)
+    }
+    
+    func startRocks() {
+        let create = SKAction.run { [unowned self] in
+            self.createRocks()
+        }
+        
+        let wait = SKAction.wait(forDuration: 3)
+        let sequence = SKAction.sequence([create, wait])
+        let repeatForever = SKAction.repeatForever(sequence)
+        
+        run(repeatForever)
     }
 }
