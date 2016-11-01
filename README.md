@@ -559,3 +559,9 @@ Now that you've built your first iPhone game, can you expand upon it? Make it mo
 - I'm part of a professional tech frat called Kappa Theta Pi at the University of Michigan. This talk wouldn't have happened without their organizational efforts! Big shout out to them. Also, if you are a Michigan student, come check us out at the beginning of next semester! We will be at Festifall, North Fest, and all over Facebook. 
 - This tutorial is a more-detailed clone of <a target="_blank" href="https://www.hackingwithswift.com/read/36/0/introduction">Project 36 by HackingWithSwift</a>. HackingWithSwift is an amazing free swift tutorial series, and I learned much of what I know from it!
 - Thanks to <a target="_blank" href="http://www.allhandsactive.org">All Hands Active</a> for hosting my talk!
+
+# 9
+- [Return to Menu](#0)
+
+### Stretch: Adding an enemy!
+#### 
