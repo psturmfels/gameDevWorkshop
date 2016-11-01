@@ -180,13 +180,11 @@ Before we begin this section, make sure that at the top of the file, under the l
 - Alright so now we have a background. Lets get to making obstacles! We want to write a function that creates a ceiling rock and a ground rock, puts them to the right edge of the screen, and then gets them scrolling across the screen to the left. Add the following function under `createGround`:
 ```swift
 func createRocks() {
-    let rockTexture = SKTexture(imageNamed: "rock")
+    let topRockTexture = SKTexture(imageNamed: "topRock")
+    let bottomRockTexture = SKTexture(imageNamed: "bottomRock")
         
-    let topRock = SKSpriteNode(texture: rockTexture)
-    topRock.zRotation = CGFloat.pi
-    topRock.xScale = -1.0
-        
-    let bottomRock = SKSpriteNode(texture: rockTexture)
+    let topRock = SKSpriteNode(texture: topRockTexture)
+    let bottomRock = SKSpriteNode(texture: bottomRockTexture)
         
     topRock.zPosition = -20
     bottomRock.zPosition = -20
@@ -216,7 +214,6 @@ func createRocks() {
 }
 ```
 - This looks like a scary function, but in truth, you have seen most of it already! I'll address the new stuff here:
-    - We create the topRock by rotating the bottomRock 180 degrees (pi radians). We then flip the topRock along the x-axis so that both rocks are facing "forward": we do this by setting the `xScale` property of topRock, which controls the scaling of the node. A negative scale flips the node.
     - We create an object of type `GKShuffleDistribution`. This object generates uniform random numbers on the interval [min, max]; when we want a new random number, we just call `.nextInt()` on the distribution object.
     - We generate a random yPosition between 20% and 80% of the way up the screen. This random yPosition represents where the space in-between the two rocks will be.
     - We position the top rock to be 70 pixels above yPosition, and the bottom rock to be 70 pixels below yPosition, leaving a gap of 2 * 70 = 140 for the plane to fly through.
@@ -289,7 +286,7 @@ func createScore() {
     - We set the `fontColor` to be black. Notice that we use a built-in color, `UIColor.black`, as opposed to manually setting the hue and saturation like we did with the background. For a list of a bunch of built-in colors, type `UIColor.` and check out the auto-complete menu.
 - Add a call to `createScore` in `didMove(to:)`; build and run to see `scoreLabel` in the top right corner.
 
-### Adding Gameplay Mechanics and Physics
+### Adding Physics
 #### In this section, we learn about adding physics to a scene, including gravity and collisions, and responding to player taps.
 - We want our `GameScene` to be able to simulate physics. To do so, we need to change the class declaration of `GameScene` to the following:
 ```swift
@@ -344,15 +341,72 @@ override func update(_ currentTime: TimeInterval) {
 - It is difficult to explain what this rotation does; instead, just build and run the app, and see it at work!
 
 - Now we have to make the player explode whenever it touches an obstacle. 
-- First uncomment the line `// player.physicsBody!.collisionBitMask = 0` in `createPlayer`. The player will no longer collide with anything.
+- First uncomment the line `// player.physicsBody!.collisionBitMask = 0` in `createPlayer`. The player will no longer collide with anything. This is for the better; trust me!
 - Add the following lines of code to `createRocks` right at the bottom of the method:
 ```swift
-topRock.physicsBody = SKPhysicsBody(texture: topRock.texture!, size: topRock.texture!.size())
+topRock.physicsBody = SKPhysicsBody(texture: topRockTexture, size: topRockTexture.size())
 topRock.physicsBody?.isDynamic = false
-bottomRock.physicsBody = SKPhysicsBody(texture: bottomRock.texture!, size: bottomRock.texture!.size())
+bottomRock.physicsBody = SKPhysicsBody(texture: bottomRockTexture, size: bottomRockTexture.size())
 bottomRock.physicsBody?.isDynamic = false
 rockCollision.physicsBody = SKPhysicsBody(rectangleOf: rockCollision.size)
 rockCollision.physicsBody?.isDynamic = false
 ```
+- Alrighty now lets get into some new stuff! You have already learned about two very important game methods: `touchesBegan()` and `update()`. The third very important game method (VIGM for short!) is the following, which you should add right after `update()`:
+```swift
+func didBegin(_ contact: SKPhysicsContact) {
+    if contact.bodyA.node?.name == "scoreDetect" || contact.bodyB.node?.name == "scoreDetect" {
+        if contact.bodyA.node == player {
+            contact.bodyB.node?.removeFromParent()
+        } else {
+            contact.bodyA.node?.removeFromParent()
+        }
+
+        let sound = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
+        run(sound)
+
+        score += 1
+
+        return
+    }
+}
+```
+- Tons of new stuff here! First: the `didBegin()` method is called whenever two nodes that have their `contactTestBitMask` set to each other make contact. In this case, this will happen whenever the plane touches anything. 
+    - There is one parameter into the function, called `contact`. This object is of type `SKPhysicsContact`, and contains a bunch of information about the contact. The three most important things that this object contains are `contact.bodyA.node`, `contact.bodyB.node` and `contact.contactPoint`. The first two represent the two bodies that came into contact. The last represents where the contact occured.
+    - You may be wondering: "how do we know what bodyA and bodyB are?" Good question! My answer is twofold: 
+        - We can compare them to class parameters, like we do in `if contact.bodyA.node == player`. This is useful for specific, individual nodes that we can store as class variables. 
+        - We can compare the name of each body to a string that we know represents a type of node in our scene, like we do in `contact.bodyA.node?.name == "scoreDetect"`. Aha! I told you the `name` of an `SKSpriteNode` would come in handy. This is more useful for a class of game nodes that all have a similar behavior.
+- So what happens here?
+    - First, we check whether either bodyA or bodyB was the red rectangle we set up after the rocks.
+    - If so, we figure out which body was the player and which was the red rectangle. We then remove the the red rectangle from the scene, using `removeFromParent()`. We do this to ensure that the plane doesn't contact the same red rectangle more than once!
+    - We then encounter yet another use of `SKAction`! We have seen actions that move and animate nodes, and actions that run blocks of code. Here is an action that plays a sound file! (A quick note: the `waitForCompletion` parameter is only really relevant when this action is blocked with a sequence of other actions. When it is in a sequence, `waitForCompletion: false` means that the action directly after the sound action will run once the sound begins. `waitForCompletion: true` means that the action directly after the sound action will run after the sound finishes.)
+    - We then increment the score, since if the user hits this rectangle, it means they have successfully navigated through a pair of rocks. Note that this will also update the `scoreLabel`.
+    - We then call return. This is so the function stops its execution, and doesn't execute the next block of code we are about to add.
+- Cool. The player gets rewarded for being awesome. Lets make them explode when they hit obstacles! Add the following block of code right at the end of `didBegin()`:
+```swift
+if contact.bodyA.node == player || contact.bodyB.node == player {
+    if let explosion = SKEmitterNode(fileNamed: "PlayerExplosion") {
+        explosion.position = player.position
+        addChild(explosion)
+    }
+
+    let sound = SKAction.playSoundFileNamed("explosion.wav", waitForCompletion: false)
+    run(sound)
+
+    player.removeFromParent()
+    speed = 0
+}
+```
+- What's going on? We know the player can only crash into three things: the scoring rectangle, the rocks, and the ground. If the player was invovled in the contact, and the red rectangle wasn't, the player must have crashed into the scenery.
+    - We check whether the player was invovled in the contact.
+    - Here is a new type! `SKEmitterNode` is a built-in type used to represent explosions and particle effects. It is particularly neat for explosions involving planes crashing into rocks. We initialize it from a file, "PlayerExplosion", which I provided for you. If you are interested in learning how to create your own explosions, it is actually quite easy! Just search `SKEmitterNode`. More discussion is beyond the scope of this tutorial.
+    - We place the explosion over the player, and remove the player from the scene. 
+    - We play a sound call explosion, just to make sure the player knows the plane has exploded.
+    - We call `speed = 0`. This is new as well! The `speed` parameter of a scene represents how fast time runs for each node attached to an object. If we called `speed = 2.0`, then everything (actions, movements, animations) would happen twice as fast; `speed = 0.5` would make everything go twice as slowly. `speed = 0` freezes everything in-place! This is effectively our way of saying that the game is over: the background, the rocks, and the ground will all stop moving.
+- Congratulations for making in this far! We have built the bulk of a simple iOS game! Build and run it!
+
+
+    
+
+
     
 
