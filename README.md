@@ -1,14 +1,14 @@
 # iOS Game Development Workshop, 11/02/16
 # 0
 ## Menu
-- [Setup](#1)
-- [Creating the Player](#2)
-- [Creating the Background](#3)
-- [Adding Obstacles](#4)
-- [Adding Physics](#5)
-- [Music and Scenes](#6)
-- [Closing Thoughts](#7)
-- [Pascal's Selfish Promotion + Acknowledgements](#8)
+1. [Setup](#1)
+2. [Creating the Player](#2)
+3. [Creating the Background](#3)
+4. [Adding Obstacles](#4)
+5. [Adding Physics](#5)
+6. [Music and Scenes](#6)
+7. [Closing Thoughts](#7)
+8. [Pascal's Selfish Promotion + Acknowledgements](#8)
 
 # 1
 - [Return to Menu](#0)
