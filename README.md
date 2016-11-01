@@ -1,5 +1,6 @@
 # iOS Game Development Workshop, 11/02/16
-# Menu:
+# 0
+## Menu
 - [Setup](#1)
 - [Creating the Player](#2)
 - [Creating the Background](#3)
@@ -10,7 +11,9 @@
 - [Pascal's Selfish Promotion + Acknowledgements](#8)
 
 # 1
-### Setup
+- [Return to Menu](#0)
+
+### Setup 
 #### In this section, we clean the template project for use.
 - Open up Xcode, and create a new project. Choose "Game" for the template.
 <img src="/images/SelectGame.png">
@@ -50,6 +53,8 @@ class GameScene: SKScene {
 - Drag the remaining files in assets (PlayerExplosion.sks, coin.wave, explosion.wav, music.m4a, spark.png) to the Content folder.
 
 # 2
+- [Return to Menu](#0)
+
 ### Creating the Player
 #### In this section, we put a sprite on the screen and animate it.
 - Open up the "GameScene.swift" file. Below the class declaration but above the `didMove(to:)` function, add the following line:
@@ -90,6 +95,8 @@ func createPlayer() {
 - Build and run the app, and you should see the the plane with a spinning propeller!
  
 # 3
+- [Return to Menu](#0)
+
 ### Creating the Background
 #### In this section, we add a multiple-depth scrolling background.
 - Still in the "GameScene.swift" file, define a new function below `createPlayer()`: 
@@ -187,6 +194,8 @@ func createGround() {
 - Add a call to `createGround` in `didMove(to:)`, and low and behold our hard work paying off when you build the app!
 
 # 4
+- [Return to Menu](#0)
+
 ### Adding Obstacles
 #### In this section, we learn about Random Number Generation and more advanced Actions
 Before we begin this section, make sure that at the top of the file, under the line `import SpriteKit`, you have the line: `import GameplayKit` 
@@ -301,6 +310,8 @@ func createScore() {
 - Add a call to `createScore` in `didMove(to:)`; build and run to see `scoreLabel` in the top right corner.
 
 # 5
+- [Return to Menu](#0)
+
 ### Adding Physics
 #### In this section, we learn about adding physics to a scene, including gravity and collisions, and responding to player taps.
 - We want our `GameScene` to be able to simulate physics. To do so, we need to change the class declaration of `GameScene` to the following:
@@ -420,6 +431,8 @@ if contact.bodyA.node == player || contact.bodyB.node == player {
 - Congratulations for making in this far! We have built the bulk of a simple iOS game! Build and run it!
 
 # 6
+- [Return to Menu](#0)
+
 ### Music and Scenes
 #### In this section, we learn how to add background music to a game. We also learn about scene transitions!
 - So far so good, but what is a game without background music? Add this line under `var scoreLabel: SKLabelNode!`: 
@@ -529,10 +542,14 @@ guard player != nil else { return }
 - HORAY! You have finished your first SpriteKit game! Build it, run it, and use it as a springboard for future games!
 
 # 7
+- [Return to Menu](#0)
+
 ### Closing Thoughts
 Now that you've built your first iPhone game, can you expand upon it? Make it more difficult as time goes on? Add different types of obstacles or rewards for the player to avoid or achieve? Add more controls to allow the player to change horizontal position? You can accomplish all of these things with little more than what this tutorial teaches. Give it a try!
 
 # 8
+- [Return to Menu](#0)
+
 ### Pascal's Selfish Promotion + Acknowledgements
 - I'm making my own game, called Avalanche, using much of the technology I've introduced here! Check out my youtube screen capture for it here: <a target="_blank" href="https://youtu.be/O0iLYOxzdm4">Avalanche Promo</a>. Stay tuned – this will be on the app store soon!
 - I'm part of a professional tech frat called Kappa Theta Pi at the University of Michigan. This talk wouldn't have happened without their organizational efforts! Big shout out to them. Also, if you are a Michigan student, come check us out at the beginning of next semester! We will be at Festifall, North Fest, and all over Facebook. 
