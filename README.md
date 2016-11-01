@@ -253,5 +253,106 @@ func startRocks() {
 ```
 - You should recognize this code; it is similar to how we created the blue background rectangles earlier on.
 - The only new thing here is that we set `rockCollision.name` to `"scoreDetect"`. The `name` parameter of an SKSpriteNode is a string that is associated with that SKSpriteNode. Why this string is useful will become clear when we implement collision detections, but for now just take my word for it: this is string is useful.
+- Two: lets create a label to keep track of how many rocks the player has passed through. First, we need a class variable to keep track of the player's score, and a variable for the label itself. Add the following below `var player: SKSpriteNode!`:
+```swift
+var scoreLabel: SKLabelNode!
 
+var score = 0 {
+    didSet {
+        scoreLabel.text = "SCORE: \(score)"
+    }
+}
+```
+- A couple new things here:
+    - We define variable of type `SKLabelNode` which is like an `SKSpriteNode`, except it represents text instead of sprites.
+    - We define an integer variable called `score` with a default value of 0. Furthermore, we use the swift keyword `didSet`. This keyword means: "whenever the value of this variable changes, call the block of code inside the `didSet` block". In this example, whenever the score changes, we update the score label to reflect the new score. 
+- Now add the following code, below `startRocks()` to create the SKLabel:
+```swift
+func createScore() {
+    scoreLabel = SKLabelNode(fontNamed: "AmericanTypewriter-Bold")
+    scoreLabel.fontSize = 28
+
+    scoreLabel.position = CGPoint(x: self.frame.width - 20, y: self.frame.height - 40)
+    scoreLabel.horizontalAlignmentMode = .right
+    scoreLabel.text = "SCORE: 0"
+    scoreLabel.fontColor = UIColor.black
+
+    addChild(scoreLabel)
+}
+```
+- We get a hands-on look at this new `SKLabelNode` type:
+    - To create an `SKLabelNode`, we initialize it with a fontName parameter. You can look up all of the built-in fonts online; Personally, I enjoy AmericanTypeWriter-Bold.
+    - We set the the `fontSize` parameter of the `scoreLabel`, which does exactly what you'd think: controls the size of the font
+    - We put the label in the top left corner of the screen, 20 pixels away from the right edge of the screen and 40 pixels down from the top. 
+    - We set the `horizontalAlignmentMode` of the label to be `.right`, which justifies the text to the right side of the label (as opposed to `.left` or `.center`).
+    - We set the text of the `scoreLabel` to be "SCORE: 0".
+    - We set the `fontColor` to be black. Notice that we use a built-in color, `UIColor.black`, as opposed to manually setting the hue and saturation like we did with the background. For a list of a bunch of built-in colors, type `UIColor.` and check out the auto-complete menu.
+- Add a call to `createScore` in `didMove(to:)`; build and run to see `scoreLabel` in the top right corner.
+
+### Adding Gameplay Mechanics and Physics
+#### In this section, we learn about adding physics to a scene, including gravity and collisions, and responding to player taps.
+- We want our `GameScene` to be able to simulate physics. To do so, we need to change the class declaration of `GameScene` to the following:
+```swift
+class GameScene: SKScene, SKPhysicsContactDelegate {
+```
+- We added what is called a _protocol_ to the GameScene, making the GameScene a _delegate_ for the game's physics simulation. Although a discussion of _protocols_ and _delegates_ is beyond the scope of this tutorial, adding the `SKPhysicsContactDelegate` protocol to `GameScene` essentially means: "I can simulate physics now!".
+- Now we are all set up to add physics to our scene. Lets begin by adding some gravity. In `didMove(to:)`, add the following lines above `createPlayer()`:
+```swift
+physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
+physicsWorld.contactDelegate = self
+```
+- `physicsWorld` is a property of SKScene, the class that GameScene inherits from (if you don't know what this means, don't worry). Basically, it is a variable that controls global things about our physics, like gravity, and the speed at which the simulation runs. 
+- Here, we set the gravity to be -5.0 in the y direction, and 0 in the x direction. This means that everything in our physicsWorld will be accelerated at a rate of 5.0 units / seconds^2 downwards direction (For those curious readers out there: yes, you can set gravity to go in any direction!)
+- Cool. Lets add some physics to the player as well. Just below `self.addChild(player)` in `createPlayer`, add the following lines of code: 
+```swift
+player.physicsBody = SKPhysicsBody(texture: frame1, size: frame1.size())
+player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
+player.physicsBody!.isDynamic = true
+
+// player.physicsBody!.collisionBitMask = 0
+```
+- Not much code here, but it does a lot!
+    - The first line sets the `physicsBody` of our player. By default, the `physicsBody` of an SKSpriteNode is empty. Only by setting it to a value can a node participate in the physics simulation. We initialize the physics body with a texture and a size, which is perfect for sprites for which we want precise collision detection. For less important sprites, we can approximate them using rectangles or circles; you can read more about how to do this by searching "SKPhysicsBody".
+    - The second line sets the `contactTestBitMask` to be the `collisionBitMask`. The `collisionBitMask` is a `phyiscsBody` parameter that represents all of the things that this node should collide with, and by default it is all nodes. When node A collides with node B, node A will tell us about the collision with node B if and only if node B is in node A's `contactTestBitMask`, and so that represents the things the player node tells us about. By default, that value is set to no nodes. With this line, we are saying, "whenever the player collides with anything, let us know". 
+    - In the third line, `isDynamic` is a boolean value that, if true, allows the node to be affected by forces like gravity and friction, and those coming from collisions. The default value is true, and I've included the line here just to explain the property.
+    - The fourth line makes the plane collide with nothing. It is commented out for now, but we will add it in later, and why we do so we be explained soon.
+- If you build and run the project now, you'll notice that the player falls straight off the bottom of the screen! Lets give the ground some physics as well to prevent that. In the `createGround` method, just after `addChild(ground)`, add the following lines of code:
+```swift
+ground.physicsBody = SKPhysicsBody(texture: groundTexture, size: groundTexture.size())
+ground.physicsBody!.isDynamic = false
+```
+- This sets up the physics for the ground, and ensures that the ground doesn't fall off the screen due to gravity!
+- Now for some player input: go to the empty `touchesBegan` method, and add the following two lines of code:
+```swift
+player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+player.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 20))
+```
+- I've introduced a very important method for games here: the `touchesBegan` method. This method is called whenever the player taps the screen. We use it to handle player input.
+    - In this method, we first set the player's velocity to be 0 (If you are curious as to why, consider what happens if the user repeatedly taps on the screen – they could reach astronomical velocities without this line!).
+    - Then, we apply an impulse in the positive y direction (Note that the amount of impulse, 20, is arbitrary and is only relative to the mass of the player node, a parameter that you can set!).
+- Before we test this out, lets add one more detail. Add the following function to the scene, right below `touchesBegan()`:
+```swift 
+override func update(_ currentTime: TimeInterval) {
+    let value = player.physicsBody!.velocity.dy * 0.001
+    let rotate = SKAction.rotate(toAngle: value, duration: 0.1)
+
+    player.run(rotate)
+}
+```
+- Here is a second important method for games: the `update` method. It is called _every single frame_ that your game runs. If you game runs at 60 frames / second, then this method is called 60 times every second your game runs! This method is often used to handle ambient properties about a game, like updating animations and sprite locations.
+    - In this method, we take 1/1000th of the player's vertical velocity, and convert it into a rotation. We rotate over a duration of 0.1 seconds, which smoothes the rotation, and then we run the rotation on the player. 
+- It is difficult to explain what this rotation does; instead, just build and run the app, and see it at work!
+
+- Now we have to make the player explode whenever it touches an obstacle. 
+- First uncomment the line `// player.physicsBody!.collisionBitMask = 0` in `createPlayer`. The player will no longer collide with anything.
+- Add the following lines of code to `createRocks` right at the bottom of the method:
+```swift
+topRock.physicsBody = SKPhysicsBody(texture: topRock.texture!, size: topRock.texture!.size())
+topRock.physicsBody?.isDynamic = false
+bottomRock.physicsBody = SKPhysicsBody(texture: bottomRock.texture!, size: bottomRock.texture!.size())
+bottomRock.physicsBody?.isDynamic = false
+rockCollision.physicsBody = SKPhysicsBody(rectangleOf: rockCollision.size)
+rockCollision.physicsBody?.isDynamic = false
+```
+    
 
