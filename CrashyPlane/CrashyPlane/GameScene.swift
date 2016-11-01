@@ -240,6 +240,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let rockCollision = SKSpriteNode(color: UIColor.red, size: CGSize(width: 32, height: frame.height))
         rockCollision.name = "scoreDetect"
+        rockCollision.alpha = 0
         addChild(rockCollision)
         rockCollision.position = CGPoint(x: xPosition + (rockCollision.size.width * 2), y: frame.midY)
         rockCollision.run(moveSequence)
