@@ -404,9 +404,119 @@ if contact.bodyA.node == player || contact.bodyB.node == player {
     - We call `speed = 0`. This is new as well! The `speed` parameter of a scene represents how fast time runs for each node attached to an object. If we called `speed = 2.0`, then everything (actions, movements, animations) would happen twice as fast; `speed = 0.5` would make everything go twice as slowly. `speed = 0` freezes everything in-place! This is effectively our way of saying that the game is over: the background, the rocks, and the ground will all stop moving.
 - Congratulations for making in this far! We have built the bulk of a simple iOS game! Build and run it!
 
+### Music and Scenes
+#### In this section, we learn how to add background music to a game. We also learn about scene transitions!
+- So far so good, but what is a game without background music? Add this line under `var scoreLabel: SKLabelNode!`: 
+```swift
+var backgroundMusic: SKAudioNode!
+```
+- Now add the following lines to `didMove(to:)` under `createScore()`:
+```swift
+let bg = SKAudioNode(fileNamed: "music.mp3")
+backgroundMusic = bg
+addChild(backgroundMusic)
+```
+- We create an `SKAudioNode` object from the music file, and then we add it to our scene. An `SKAudioNode` is a special type of node that is initialized with a song, and once added to a scene, plays that song on loop forever! Perfect for background music.
+- You may notice that we don't directly assign the new audio node to the `backgroundMusic` variable, but instead create a copy called `bg`. Long story short, there is an unfixed bug with this type of node, and so we have to create `SKAudioNode` objects like this.
+- If you build it and run it, you can here background music!
 
-    
+- The other problem with our game is that the player can't replay after losing! Lets fix that by adding game states. Add the following enumeration above the class declaration at the top of the file:
+```swift
+enum GameState {
+    case showingLogo
+    case playing
+    case dead
+}
+```
+- An enumeration, declared in swift using `enum`, is a type that represents a fixed set of values. Here, a `GameState` object can take three values, `showingLogo`, `playing` and `dead`.
+- To keep track of the new game states we are about to add, lets define three more class variables below the `score` variable:
+```swift
+var logo: SKSpriteNode!
+var gameOver: SKSpriteNode!
+var gameState = GameState.showingLogo
+```
+- Notice how we declare gameState as a `GameState` object with default value `showingLogo`.
+- Lets add a function to create the `logo` and `gameOver` nodes. Just above `createPlayer`, add the following function:
+```swift
+func createLogos() {
+    logo = SKSpriteNode(imageNamed: "logo")
+    logo.position = CGPoint(x: frame.midX, y: frame.midY)
+    addChild(logo)
 
+    gameOver = SKSpriteNode(imageNamed: "gameover")
+    gameOver.position = CGPoint(x: frame.midX, y: frame.midY)
+    gameOver.alpha = 0
+    addChild(gameOver)
+}
+```
+- The only new thing here is the line `gameOver.alpha = 0`. The `alpha` value of a sprite node is how transparent it is. An alpha value of 1 means that a node is completely opaque, while an alpha value of 0 means the node is invisible. Any value in between gets you that percent transparency. We set the `gameOver` node to be invisible intially, since the player shouldn't see it until they lose!
+- Add a call to `createLogos()` inside `didMove(to:)`.
+- Inside `didMove(to:)`, _remove_ the call to `createRocks`. We don't want to create rocks until the player begins playing!
+- Inside the `createPlayer()` method, change the line `player.physicsBody?.isDynamic = true` to `player.physicsBody?.isDynamic = false`. We don't want the plane to feel the effects of gravity until they begin playing!  
+- Now we have a starting splash screen. When the player taps that screen, we should begin the game. Change the `touchesBegan` method to look like this:
+```swift
+override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    switch gameState {
+    case .showingLogo:
+        gameState = .playing
 
-    
+        let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+        let remove = SKAction.removeFromParent()
+        let wait = SKAction.wait(forDuration: 0.5)
+        let activatePlayer = SKAction.run { [unowned self] in
+            self.player.physicsBody?.isDynamic = true
+            self.startRocks()
+        }
 
+        let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
+        logo.run(sequence)
+
+    case .playing:
+        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        player.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 20))
+
+    case .dead:
+        break
+    }
+}
+```
+- Here, we use a switch statement on `gameState`. Notice that if `gameState` is `.playing`, we do the same thing we always did: apply an impulse to the plane. 
+    - If `gameState` is `.showingLogo`, then we transition to the `.playing` state.
+    - We use a fadeOut action to slowly fade out the logo.
+    - We use a remove action to delete the logo.
+    - We use a wait action to pause a half-second between removing the logo and activating the player.
+    - We use a run action to get the player moving and the rocks spawning.
+- Actions are everywhere in iOS game dev! We've succesfully handled the beginning state of the game. Now we need to handle the gameOver state. 
+- In the `didBegin` method, just above the call to `player.removeFromParent()`, add the following three lines:
+```swift
+gameOver.alpha = 1
+gameState = .dead
+backgroundMusic.run(SKAction.stop())
+```
+- We make the `gameOver` label visible, we change the state to `.dead`, and we stop the background music. All straightforward stuff. 
+- Now we need to add a way for the user to replay from the `.dead` state. In `touchesBegan`, delete the `break` line in `.case dead:` and replace it with:
+```swift
+let scene = GameScene(fileNamed: "GameScene")!
+let transition = SKTransition.moveIn(with: SKTransitionDirection.right, duration: 1)
+self.view?.presentScene(scene, transition: transition)
+```
+- So what is going on here? 
+    - We are creating a new object of type `GameScene`. We have been implicity working with this object all along! A `GameScene` object is the object that you have been coding, and it creates our game!
+    - We are creating an object of type `SKTransition`. These objects are used to transition between scenes. For example, suppose your game had a menu scene, an in-game scene, a pause scene and so on. We could use transitions to make the changes between scenes look nice. In this case, we will use transitions to transition between a `.dead` game and a fresh new game, ready to play.
+    - We call `self.view?.presentScene`. `self.view?` is a property that refers to the view that contains this scene. A discussion of what a view is in relation to a scene is beyond the scope of this tutorial, but you can think of the view as an object that we have placed our scene in and manages our scene from a high-level. 
+    - `presentScene` replaces our current scene, which is in the `.dead` state, with a freshly made scene. Notice that the new `GameScene` will be in the `.showingLogo` state. 
+- Before we run the game, add the following line to `update()` before anything else:
+```swift
+guard player != nil else { return }
+```
+- This is a safety precaution. Note that the `update()` method may be called before the player is created, in which case we are trying to rotate a node that does not yet exist. This line ensures that if the player does not yet exist, we don't try and rotate anything. This line makes use of a `guard` statement, which is swift syntax for "make sure that this condition is true, and if it is not true, get me the heck out of here".
+- HORAY! You have finished your first SpriteKit game! Build it, run it, and use it as a springboard for future games!
+
+### Closing Thoughts
+Now that you've built your first iPhone game, can you expand upon it? Make it more difficult as time goes on? Add different types of obstacles or rewards for the player to avoid or achieve? Add more controls to allow the player to change horizontal position? You can accomplish all of these things with little more than what this tutorial teaches. Give it a try!
+
+### Pascal's Selfish Promotion + Acknowledgements:
+- I'm making my own game, called Avalanche, using much of the technology I've introduced here! Check out my youtube screen capture for it here: <a target="_blank" href="https://youtu.be/O0iLYOxzdm4">Avalanche Promo</a>
+- I'm part of a professional tech frat called Kappa Theta Pi at the University of Michigan. This talk wouldn't have happened without their organizational efforts! Big shout out to them. Also, if you are a Michigan student, come check us out at the beginning of next semester! We will be at Festifall, North Fest, and all over Facebook. 
+- This tutorial is a more-detailed clone of <a target="_blank" href="https://www.hackingwithswift.com/read/36/0/introduction">Project 36 by HackingWithSwift</a>. HackingWithSwift is an amazing free swift tutorial series, and I learned much of what I know from it!
+- Thanks to <a target="_blank" href="http://www.allhandsactive.org">All Hands Active</a> for hosting my talk!
