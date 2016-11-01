@@ -102,13 +102,11 @@ class GameScene: SKScene {
     }
     
     func createRocks() {
-        let rockTexture = SKTexture(imageNamed: "rock")
+        let topRockTexture = SKTexture(imageNamed: "topRock")
+        let bottomRockTexture = SKTexture(imageNamed: "bottomRock")
         
-        let topRock = SKSpriteNode(texture: rockTexture)
-        topRock.zRotation = CGFloat.pi
-        topRock.xScale = -1.0
-        
-        let bottomRock = SKSpriteNode(texture: rockTexture)
+        let topRock = SKSpriteNode(texture: topRockTexture)
+        let bottomRock = SKSpriteNode(texture: bottomRockTexture)
         
         topRock.zPosition = -20
         bottomRock.zPosition = -20
