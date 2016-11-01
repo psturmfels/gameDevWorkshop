@@ -534,6 +534,10 @@ self.view?.presentScene(scene, transition: transition)
     - We are creating an object of type `SKTransition`. These objects are used to transition between scenes. For example, suppose your game had a menu scene, an in-game scene, a pause scene and so on. We could use transitions to make the changes between scenes look nice. In this case, we will use transitions to transition between a `.dead` game and a fresh new game, ready to play.
     - We call `self.view?.presentScene`. `self.view?` is a property that refers to the view that contains this scene. A discussion of what a view is in relation to a scene is beyond the scope of this tutorial, but you can think of the view as an object that we have placed our scene in and manages our scene from a high-level. 
     - `presentScene` replaces our current scene, which is in the `.dead` state, with a freshly made scene. Notice that the new `GameScene` will be in the `.showingLogo` state. 
+- Lets take this opportunity to make the red scoring rectangle invisible. Add the following line in `createRocks()` above `addChild(rockCollision)`:
+```swift
+rockCollision.alpha = 0
+```
 - Before we run the game, add the following line to `update()` before anything else:
 ```swift
 guard player != nil else { return }
