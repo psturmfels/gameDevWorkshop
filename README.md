@@ -9,6 +9,7 @@
 6. [Music and Scenes](#6)
 7. [Closing Thoughts](#7)
 8. [Pascal's Selfish Promotion + Acknowledgements](#8)
+9. [Stretch: Adding an Enemy!](#9)
 
 # 1
 - [Return to Menu](#0)
