@@ -17,6 +17,7 @@ enum GameState {
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    var enemy: SKSpriteNode!
     var player: SKSpriteNode!
     var scoreLabel: SKLabelNode!
     var backgroundMusic: SKAudioNode!
@@ -58,7 +59,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let activatePlayer = SKAction.run { [unowned self] in
                 self.player.physicsBody?.isDynamic = true
                 self.startRocks()
+                
+                self.createEnemy()
+                
+                let fireMissile = SKAction.run { [unowned self] in
+                    self.createMissile()
+                }
+                let waitRandom = SKAction.wait(forDuration: 4, withRange: 1)
+                let sequenceFire = SKAction.sequence([waitRandom, fireMissile])
+                let runForever = SKAction.repeatForever(sequenceFire)
+                self.enemy.run(runForever)
             }
+            
             
             let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
             logo.run(sequence)
@@ -76,11 +88,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         guard player != nil else { return }
+        guard enemy != nil else { return }
         
         let value = player.physicsBody!.velocity.dy * 0.001
         let rotate = SKAction.rotate(toAngle: value, duration: 0.1)
         
         player.run(rotate)
+        
+        updateEnemy()
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -97,6 +112,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             score += 1
             
             return
+        }
+        if contact.bodyA.node?.name == "missile" {
+            if let explosion = SKEmitterNode(fileNamed: "missileExplosion") {
+                explosion.position = (contact.bodyA.node?.position)!
+                addChild(explosion)
+            }
+            contact.bodyA.node?.removeFromParent()
+        }
+        else if contact.bodyB.node?.name == "missile" {
+            if let explosion = SKEmitterNode(fileNamed: "missileExplosion") {
+                explosion.position = (contact.bodyB.node?.position)!
+                addChild(explosion)
+            }
+            contact.bodyB.node?.removeFromParent()
         }
         if contact.bodyA.node == player || contact.bodyB.node == player {
             if let explosion = SKEmitterNode(fileNamed: "PlayerExplosion") {
@@ -125,6 +154,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOver.position = CGPoint(x: frame.midX, y: frame.midY)
         gameOver.alpha = 0
         addChild(gameOver)
+    }
+    
+    func createEnemy() {
+        let enemyTexture = SKTexture(imageNamed: "ship")
+        enemy = SKSpriteNode(texture: enemyTexture)
+        enemy.position.y = player.position.y
+        enemy.position.x = self.frame.width - player.position.x
+        enemy.zPosition = 10
+        
+        self.addChild(enemy)
+    }
+    
+    func createMissile() {
+        
+        let missileTexture = SKTexture(imageNamed: "missile")
+        let missile = SKSpriteNode(texture: missileTexture)
+        if let burn = SKEmitterNode(fileNamed: "fireTrail") {
+            burn.position.x = missile.frame.width * 0.5
+            burn.position.y = 0
+            missile.addChild(burn)
+        }
+        addChild(missile)
+        missile.position = self.enemy.position
+        missile.zPosition = 10
+        missile.name = "missile"
+        
+        missile.physicsBody = SKPhysicsBody(texture: missileTexture, size: missileTexture.size())
+        missile.physicsBody!.isDynamic = false
+        missile.physicsBody!.collisionBitMask = 0
+        
+        let moveLeft = SKAction.moveBy(x: -self.frame.width, y: 0, duration: 1)
+        let moveSequence = SKAction.sequence([moveLeft, SKAction.removeFromParent()])
+        missile.run(moveSequence)
+    }
+    
+    func updateEnemy() {
+        let moveEnemy = SKAction.moveTo(y: player.position.y, duration: 0.01)
+        enemy.run(moveEnemy)
     }
     
     func createPlayer() {
