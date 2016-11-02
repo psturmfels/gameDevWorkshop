@@ -565,3 +565,13 @@ Now that you've built your first iPhone game, can you expand upon it? Make it mo
 
 ### Stretch: Adding an enemy!
 #### 
+You may have noticed that this game is really easy the way it currently is. Can you make the game more difficult for the player? There are some fairly easy ways to do this:
+- Make the rocks spawn more frequently
+- Make the rocks move faster
+- Make the gap between the rocks smaller
+- Make the gravity stronger
+
+But I have another thing in mind: I've included the sprites for an enemy space-ship and a missile, and an emitter node for a trailing blaze of fire. Can you use these to draw an enemy that fires missiles at the player every so often? 
+My sample implementation of this is done in GameScene-addingAnEnemy.swift.
+
+So where do we go from here? Try adding on new features to this game! Make a menu screen for it! Make it more difficult as time goes on! You have already learned enough to tweak this game a substantial amount. 
